@@ -1,0 +1,9 @@
+{
+  "url": "jdbc:mysql://localhost:3306/union_reporting",
+  "user": "root",
+  "password": "Bezoda012x",
+  "projectId": 5,
+  "authorName": "Stas Vasiliev",
+  "authorLogin": "stas02",
+  "authorEmail": "stas1stas1@gmail.com"
+}

@@ -1,0 +1,1 @@
+INSERT INTO author(name, login, email)values (?,?,?)
