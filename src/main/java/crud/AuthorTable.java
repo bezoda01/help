@@ -21,9 +21,14 @@ public class AuthorTable {
             sqlEx.printStackTrace();
         }
         try {
-            while(rs.next()){
-            model.setName(rs.getString(1));
-            model.setId(rs.getInt(2));
+            if(rs == null) {
+                model.setName("");
+                model.setId(0);
+            }else {
+                while(rs.next()){
+                    model.setName(rs.getString(1));
+                    model.setId(rs.getInt(2));
+            }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

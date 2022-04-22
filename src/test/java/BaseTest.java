@@ -15,7 +15,8 @@ public class BaseTest {
     @BeforeTest
     public void beforeTest() {
         AuthorModel firstModel = AuthorTable.select(Config.environment.getValue("/authorName").toString());
-        if(firstModel.getName() == null) {
+        System.out.println(firstModel.getId());
+        if(firstModel.getId() == 0) {
             AuthorTable.add();
             AuthorModel model = AuthorTable.select(Config.environment.getValue("/authorName").toString());
             author_id = model.getId();
