@@ -1,0 +1,1 @@
+DELETE FROM test order by id desc limit %s

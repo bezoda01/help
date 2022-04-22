@@ -3,23 +3,29 @@ import crud.AuthorTable;
 import crud.TestTable;
 import models.AuthorModel;
 import models.TestModel;
+import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeTest;
 import utils.*;
 
 public class BaseTest {
+    public static int author_id = 0;
+
+    @BeforeTest
+    public void beforeTest() {
+        AuthorModel firstModel = AuthorTable.select(Config.environment.getValue("/authorName").toString());
+        if(firstModel.getName() == null) {
+            AuthorTable.add();
+            AuthorModel model = AuthorTable.select(Config.environment.getValue("/authorName").toString());
+            author_id = model.getId();
+        } else {
+            author_id = firstModel.getId();
+        }
+    }
 
     @AfterMethod
-    public void afterTest(ITestResult result) {
-        AuthorModel firstModel = AuthorTable.checkIsAuthorExist(String.format(FileUtils.readFile("src/main/resources/getAuthor.sql"), Config.environment.getValue("/authorName").toString()));
-        if(firstModel.getName() == null) {
-            AuthorModel authorModel = new AuthorModel(
-                    Config.environment.getValue("/authorName").toString(),
-                    Config.environment.getValue("/authorLogin").toString(),
-                    Config.environment.getValue("/authorEmail").toString());
-            AuthorTable.add(authorModel, FileUtils.readFile("src/main/resources/AddAuthor.sql"));
-        }
-
+    public void afterMethod(ITestResult result) {
         TestModel testModel = new TestModel(
                 result.getName(),
                 result.getStatus(),
@@ -30,9 +36,9 @@ public class BaseTest {
                 DateUtils.getFormatDate(result.getEndMillis()),
                 HostUtils.getHostName(),
                 BrowserUtils.getBrowserName(),
-                firstModel.getId());
+                author_id);
         TestTable.add(testModel, FileUtils.readFile("src/main/resources/testAdd.sql"));
-
+        Assert.assertFalse(TestTable.select(FileUtils.readFile("src/main/resources/selectTest.sql")+"where start_time = '"+DateUtils.getFormatDate(result.getStartMillis())+"'").isEmpty(), "Test was not add");
         BrowserUtils.quit();
     }
 }

@@ -2,6 +2,8 @@ package crud;
 
 import config.Config;
 import models.AuthorModel;
+import utils.FileUtils;
+
 import java.sql.*;
 
 public class AuthorTable {
@@ -9,12 +11,12 @@ public class AuthorTable {
     private static Statement stmt;
     private static ResultSet rs;
 
-    public static AuthorModel checkIsAuthorExist(String inquiry) {
+    public static AuthorModel select(String name) {
         AuthorModel model = new AuthorModel();
         try {
             con = DriverManager.getConnection(Config.environment.getValue("/url").toString(), Config.environment.getValue("/user").toString(), Config.environment.getValue("/password").toString());
             stmt = con.createStatement();
-            rs = stmt.executeQuery(inquiry);
+            rs = stmt.executeQuery(String.format(FileUtils.readFile("src/main/resources/getAuthor.sql"), name));
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
         }
@@ -29,14 +31,14 @@ public class AuthorTable {
         return model;
     }
 
-    public static void add(AuthorModel model, String inquiry) {
+    public static void add() {
         PreparedStatement prSt = null;
         try {
             con = DriverManager.getConnection(Config.environment.getValue("/url").toString(), Config.environment.getValue("/user").toString(), Config.environment.getValue("/password").toString());
-            prSt = con.prepareStatement(inquiry);
-            prSt.setString(1, model.getName());
-            prSt.setString(2, model.getLogin());
-            prSt.setString(3, model.getEmail());
+            prSt = con.prepareStatement(FileUtils.readFile("src/main/resources/AddAuthor.sql"));
+            prSt.setString(1, Config.environment.getValue("/authorName").toString());
+            prSt.setString(2, Config.environment.getValue("/authorLogin").toString());
+            prSt.setString(3, Config.environment.getValue("/authorEmail").toString());
             prSt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -4,6 +4,7 @@
     <test name="TestCases">
         <classes>
             <class name="TestCases"/>
+            <class name="TestCasesTK2"/>
         </classes>
     </test>
 </suite>
